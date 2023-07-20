@@ -23,14 +23,14 @@ const signInUser = async(parent:string,args:userArgs) =>{
         const {userName,password} = args
         const user = await userModel.findOne({userName})
         if(!user) {
-            return 'User not found'
+            throw new Error('User not found')
         }        
-        const results =await bcrypt.compare(password,user.password);
-        console.log(results);
-        
+        const results =await bcrypt.compare(password,user.password);        
         if(!results){
-            return "invalid credentials"
+            throw new Error("invalid credentials")
         }
+        console.log(process.env.SECRET);
+        
         return user
     }catch (e){
         console.log(e);
