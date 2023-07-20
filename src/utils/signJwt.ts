@@ -1,8 +1,11 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 
 const secret = 'secret';
 const generateToken = (user:any)=>{
-    const token = jwt.sign(user,secret)
+    const userObject = user.toObject();
+    const token = jwt.sign(userObject,secret,{expiresIn:'18000s'})
+    console.log(token);
+    
     return token
 }
 export default generateToken

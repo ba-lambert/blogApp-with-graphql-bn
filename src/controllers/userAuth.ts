@@ -1,5 +1,6 @@
 import userModel from '../models/userModel'
 import bcrypt from 'bcrypt'
+import generateToken from '../utils/signJwt'
 
 const saltRounds = 8
 type userArgs = {
@@ -8,6 +9,10 @@ type userArgs = {
     lastName:string,
     password:string,
     userName:string
+}
+type userResponse = {
+    user:userArgs,
+    token:string
 }
 const signUpUser = async(parent:string,args:userArgs) =>{
     const {userName,firstName,lastName,password} = args
@@ -29,8 +34,7 @@ const signInUser = async(parent:string,args:userArgs) =>{
         if(!results){
             throw new Error("invalid credentials")
         }
-        console.log(process.env.SECRET);
-        
+        const token = await generateToken(user);
         return user
     }catch (e){
         console.log(e);
