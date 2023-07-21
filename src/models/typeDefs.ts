@@ -6,6 +6,9 @@ const typeDefs = gql`
         userName:String,
         firstName:String,
         lastName:String,
+        email:String,
+        role:String,
+        gender:String,
         password:String,
         token:String
     }
@@ -36,7 +39,8 @@ const typeDefs = gql`
             firstName:String!,
             lastName:String!,
             userName:String!,
-            password:String!
+            password:String!,
+            email:String!,
         ):User
     }
 `

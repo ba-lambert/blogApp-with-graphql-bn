@@ -9,6 +9,7 @@ type userArgs = {
     firstName:string,
     lastName:string,
     password:string,
+    email:string,
     userName:string
 }
 type userResponse = {
@@ -16,10 +17,10 @@ type userResponse = {
     token:string
 }
 const signUpUser = async(parent:string,args:userArgs) =>{
-    const {userName,firstName,lastName,password} = args
+    const {userName,firstName,lastName,email,password} = args
     const hashedPassword =await bcrypt.hash(password,saltRounds)
     console.log(hashedPassword);
-    const newUser = new userModel({userName,firstName,lastName,password:hashedPassword});
+    const newUser = new userModel({userName,firstName,lastName,email,password:hashedPassword});
     await newUser.save()
     return newUser
 }
