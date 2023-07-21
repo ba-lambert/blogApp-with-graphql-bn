@@ -1,6 +1,7 @@
 import userModel from '../models/userModel'
 import bcrypt from 'bcrypt'
 import generateToken from '../utils/signJwt'
+import { ApolloError } from 'apollo-server-errors';
 
 const saltRounds = 8
 type userArgs = {
@@ -28,14 +29,15 @@ const signInUser = async(parent:string,args:userArgs) =>{
         const {userName,password} = args
         const user = await userModel.findOne({userName})
         if(!user) {
-            throw new Error('User not found')
+            throw new ApolloError('User not found', 'USER_NOT_FOUND');
         }        
         const results =await bcrypt.compare(password,user.password);        
         if(!results){
-            throw new Error("invalid credentials")
+            throw new ApolloError('Invalid credentials', 'INVALID_CREDENTIALS');
         }
         const token = await generateToken(user);
-        return user
+        return {
+            token:token,user:user}
     }catch (e){
         console.log(e);
     }
