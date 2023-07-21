@@ -1,6 +1,9 @@
 import { blogsModel } from "./models/blogsModel";
-import userModel from "./models/userModel";
 import { signUpUser,signInUser } from "./controllers/userAuth";
+import multer from 'multer';
+import storage from "./storage/storage";
+
+const upload = multer({storage})
 type args = {
     name:string
 }
