@@ -1,4 +1,9 @@
 import { blogsModel } from "./models/blogsModel";
+import { signUpUser,signInUser } from "./controllers/userAuth";
+import multer from 'multer';
+import storage from "./storage/storage";
+
+const upload = multer({storage})
 type args = {
     name:string
 }
@@ -7,6 +12,13 @@ type blogArgs = {
     header:string,
     author:string,
     body:string
+}
+type userArgs = {
+    id:string,
+    firstName:string,
+    lastName:string,
+    password:string,
+    userName:string
 }
 const resolvers = {
     Query:{
@@ -39,7 +51,9 @@ const resolvers = {
             const {id} = args
             const deleteBlog = await blogsModel.findByIdAndDelete(id)
             return deleteBlog
-        }
+        },
+        login: signInUser,
+        signUp: signUpUser
     }
 }
 export {resolvers}
