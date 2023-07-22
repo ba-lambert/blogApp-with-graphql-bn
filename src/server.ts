@@ -1,25 +1,38 @@
-import express from 'express';
-import { Request, Response } from 'express';
+import express, { Request } from 'express';
 import mongoose from 'mongoose';
-import { ApolloServer } from '@apollo/server';
-import {startStandaloneServer} from '@apollo/server/standalone';
+import { ApolloServer } from 'apollo-server-express';
 import { resolvers } from './resolvers';
 import { typeDefs } from './models/typeDefs';
 import dotenv from 'dotenv';
 
-dotenv.config()
-const mongoUrl = 'mongodb+srv://admin:QccKEqI85NyX6FhC@crud.ftmm9en.mongodb.net/blog?retryWrites=true&w=majority'
-mongoose.connect(mongoUrl).then(() => {
-    console.log(`Db Connected successfuly`);
-  })
-  .catch(err => {
-    console.log(err.message);
+dotenv.config();
+const dbUrl:any = process.env.MONGO_URL
+mongoose.connect(dbUrl).then(() => {
+  console.log('DB Connected successfully');
+}).catch(err => {
+  console.error('Error connecting to the database:', err.message);
+});
+
+const app = express();
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }: { req: Request }) => ({ req }), // Explicitly specify the type for req
+});
+
+async function startServer() {
+  await server.start();
+
+  server.applyMiddleware({ app });
+
+  const port: number = 3000;
+
+  app.listen(port, () => {
+    console.log(`Server is ready at http://localhost:${port}${server.graphqlPath}`);
   });
-const port:number = 3000
-const server = new ApolloServer({typeDefs,resolvers})
-startStandaloneServer(server,{
-    listen:{port:port}
-}).then(({url})=>{
-    console.log(`server is ready at ${url}`);
-    
-})
+}
+
+startServer().catch(err => {
+  console.error('Error starting the server:', err.message);
+});

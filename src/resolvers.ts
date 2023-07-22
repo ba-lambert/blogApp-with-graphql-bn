@@ -2,6 +2,8 @@ import { blogsModel } from "./models/blogsModel";
 import { signUpUser,signInUser } from "./controllers/userAuth";
 import multer from 'multer';
 import storage from "./storage/storage";
+import verifyToken from "./utils/verifyToken";
+import {Request} from "express";
 
 const upload = multer({storage})
 type args = {
@@ -25,7 +27,11 @@ const resolvers = {
         greetings: () =>"hello World",
         welcome:(parent:string,args:args)=>`Hello ${args.name}`,
         blogs:async() => await blogsModel.find({}),
-        blog:async (parent:string,args:blogArgs) =>{
+        blog:async (parent:string,args:blogArgs,Request: { headers: { authorization: string; }; }) =>{
+            const token=Request.headers.authorization
+            // const user = verifyToken()
+            console.log(token);
+            
             const {id} = args
             const singleBlog = await blogsModel.findById(id);
             return singleBlog
